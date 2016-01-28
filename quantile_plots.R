@@ -14,15 +14,15 @@ mytheme<- theme(axis.title.y = element_blank(),
 #with MESS
 setwd("/media/matt/OS/output/out")
 #withoutMESS
-setwd("/home/matt/Copy/Invasive invertebrates/out_final")
+setwd("~/Documents/niche/pca")
 
-pca100 <- read.csv ("/media/matt/OS/output/out/pca_env0.csv")
-pca95 <- read.csv ("/media/matt/OS/output/out/pca_env0.05.csv")
-pca90 <- read.csv ("/media/matt/OS/output/out/pca_env0.1.csv")
-pca85 <- read.csv ("/media/matt/OS/output/out/pca_env0.15.csv")
-pca80 <- read.csv ("/media/matt/OS/output/out/pca_env0.2.csv")
-pca75 <- read.csv ("/media/matt/OS/output/out/pca_env0.25.csv")
-pca70 <- read.csv ("/media/matt/OS/output/out/pca_env0.3.csv")
+pca100 <- read.csv ("pca_env0.csv")
+pca95 <- read.csv ("pca_env0.05.csv")
+pca90 <- read.csv ("pca_env0.1.csv")
+pca85 <- read.csv ("pca_env0.15.csv")
+pca80 <- read.csv ("pca_env0.2.csv")
+pca75 <- read.csv ("pca_env0.25.csv")
+pca70 <- read.csv ("pca_env0.3.csv")
 
 pca100$Quantile <- 100
 pca95$Quantile <- 95

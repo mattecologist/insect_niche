@@ -1,10 +1,13 @@
 ###The following is code for plots.
 
+## Mkeas Figure 1 and Figure 2
+
 library (scatterplot3d)
 
-boyce_val <- read.csv ("/Volumes/Matt2015/Postdoc backup/output/sept/boyce_sept.csv")
+### !!! this boyden table is out of date, rebuild!!!!
+boyce_val <- read.csv ("~/Documents/nicheSDM/boyce_sept.csv")
 #at the moment this is just taking in the 75% overlap one...
-pca_val <- read.csv ("/Volumes/Matt2015/Postdoc backup/output/sept/pca/pca_env0.25.csv")
+pca_val <- read.csv ("~/Documents/niche/pca_nobuff/pca_env0.25.csv")
 pca_val$unfilling <- pca_val$unfilling * -1
 
 pca_df <- pca_val
@@ -137,7 +140,7 @@ barplot (unf[,1], col=c("light grey", "#fb0009", "#e6c800","#007aa6"),names.arg=
 
 dev.off()
 
-640 400
+##640 400
 
 
 test$col[test$type=="B"] <- "#fb0009"
