@@ -1,6 +1,8 @@
-###The following is code for plots.
+### The following is code for plots and calculting the amount of niche shift across the different insect orders
+### in the study.
+### Base code is from Diedrick Strubbe - cheers! (see references in main manuscript for publication details)
 
-## Mkeas Figure 1 and Figure 2
+## Produces Figure 1 and Figure 2 in main manuscript.
 
 library (scatterplot3d)
 
@@ -43,11 +45,7 @@ test <- merge (boyce_val, pca_df, by="species")
 test$points <- 0
 
 
-
 test$X.y <- NULL
-
-
-
 
 colnames (test) <- c("species", "ID", "boyce", "overlap", "expansion", "stability", "unfilling", "euc_dist", "euc_ext", "type", "points") 
 
@@ -140,6 +138,11 @@ barplot (unf[,1], col=c("light grey", "#fb0009", "#e6c800","#007aa6"),names.arg=
 
 dev.off()
 
+
+#######################################################
+## BEYOND THIS POINT IS JIBBERISH 
+
+
 ##640 400
 
 
@@ -149,16 +152,7 @@ test$col[test$type=="D"] <- "#e6c800"
 test$col[test$type=="E"] <- "#007aa6"
 
 
-
-
-
-
-
-
-
-
-
-##################################33
+##################################
 #Unfilling
 
 test$col <- "black"
