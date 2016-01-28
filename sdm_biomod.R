@@ -1,8 +1,11 @@
 ## Species distribution models/ ENMs to test the ability of native range data to project across to invasive range
-## This will take the native range data and build the models just on that, and project to the world
-## backgrounds are the same as used for the PCA-ENV analysis
-## scripts largely follow the BIOMOD2 tutorial with some slight modifications
-
+## This will take the native range data and build the models just on that, and project to the world surfaces.
+## As we are only interested in making the best model and assessing it post-hoc with the Boyce index, 
+## all data is used in training and no AUC or TSS thresholds are employed to determine model fit before projections.
+## Backgrounds are the same as used for the PCA-ENV analysis
+## 
+## Scripts largely follow the BIOMOD2 tutorial with some slight modifications
+ 
 library (biomod2)
 library (maptools)
 
@@ -27,32 +30,32 @@ for (spp in species) { cat(spp,'\n')
 #native occurences
 spp1 <- read.csv (paste0('./occurences_nobuffer/',spp,'/',"nat_df.csv"))
 #invasive occurences
-spp2 <- read.csv (paste0('./occurences_nobuffer/',spp,'/',"inv_df.csv"))
+#spp2 <- read.csv (paste0('./occurences_nobuffer/',spp,'/',"inv_df.csv"))
 
 #remove the redundant cell column
 spp1$cell <- NULL
-spp2$cell <- NULL
+#spp2$cell <- NULL
 
 ##Make pa 0 = NA for pseudoabsences
 spp1$pa[spp1$pa==0] <- NA
-spp2$pa[spp2$pa==0] <- NA
+#spp2$pa[spp2$pa==0] <- NA
 
 #spp2 becomes entire distribution
-spp2 <- rbind(spp1, spp2)
+#spp2 <- rbind(spp1, spp2)
 
 ## background of the native range
 bg1_vals <- extract (cruclim, spp1[,1:2], df=TRUE)
 bg1_vals$ID <- NULL
 
 ## background of the native + invasive range
-bg2_vals <- extract (cruclim, spp2[,1:2], df=TRUE)
-bg2_vals$ID <- NULL
+#bg2_vals <- extract (cruclim, spp2[,1:2], df=TRUE)
+#bg2_vals$ID <- NULL
 
 #create Spatial Points Data Frames
 coordinates (spp1) <- ~X+Y
-coordinates (spp2) <- ~X+Y
+#coordinates (spp2) <- ~X+Y
 spp1_df <- SpatialPointsDataFrame(spp1, data=bg1_vals)
-spp2_df <- SpatialPointsDataFrame(spp2, data=bg2_vals)
+#spp2_df <- SpatialPointsDataFrame(spp2, data=bg2_vals)
 
 #setup BIOMOD data
 #following tutorial conventions for simplicity
@@ -63,7 +66,7 @@ setwd("/Volumes/Matt2015/niche_nobuff")
 ##GLOBAL MODELLING OPTIONS
 ###################################################################################################
 myBiomodOption <- BIOMOD_ModelingOptions(
-  MAXENT = list( path_to_maxent.jar = "/Volumes/Matt2015/Postdoc backup/maxent/maxent.jar",
+  MAXENT = list( path_to_maxent.jar = "/Volumes/Matt2015/maxent/maxent.jar",
                  maximumiterations = 200,
                  visible = FALSE,
                  linear = FALSE,
@@ -96,21 +99,21 @@ myBiomodData <- BIOMOD_FormatingData(resp.var = myResp,
 
 myBiomodModelOut <- BIOMOD_Modeling(
                                         myBiomodData,
-                                        models = c('GLM', 'GBM', 'RF', 'MAXENT'),
+                                        models = c('GLM', 'GBM', 'RF', 'MAXENT'), #four models used
                                         models.options = myBiomodOption,
-                                        NbRunEval=1, # how many runs to do = 10 for our study
-                                        DataSplit=70, # data split, 70 for training, 30 for testing
+                                        NbRunEval=1, # how many runs to do = normally 10, but here is 1
+                                        DataSplit=100, # data split =100. normally 70 for training, 30 for testing
                                         Yweights=NULL,
                                         Prevalence=0.5,
                                         VarImport=10,
-                                        models.eval.meth = c('TSS','ROC'),
+                                        #models.eval.meth = c('TSS','ROC'),
                                         SaveObj = TRUE,
                                         rescal.all.models = TRUE)
 
 
 #write out evaluation metrics
-eval<- get_evaluations(myBiomodModelOut)
-write.csv (eval, file=paste0(spp, "_nat_eval.csv"))
+#eval<- get_evaluations(myBiomodModelOut)
+#write.csv (eval, file=paste0(spp, "_nat_eval.csv"))
 
 #projections
 
@@ -128,9 +131,9 @@ myBiomodProj <- BIOMOD_Projection(modeling.output = myBiomodModelOut,
 myEnsemble <- BIOMOD_EnsembleModeling (modeling.output =myBiomodModelOut, 
                                        chosen.models='all', 
                                        em.by = 'all',
-                                       eval.metric=c('TSS','ROC'),
-                                       eval.metric.quality.threshold=c(0.5, 0.7), ##this TSS score is low, but sometimes shit is broke
-                                       models.eval.meth = c('TSS', 'ROC'), 
+                                       #eval.metric=c('TSS','ROC'),
+                                       #eval.metric.quality.threshold=c(0.5, 0.7), ##this TSS score is low, but sometimes shit is broke
+                                       #models.eval.meth = c('TSS', 'ROC'), 
                                        prob.mean = FALSE,
                                        prob.ci.alpha = 0.05,
                                        committee.averaging = FALSE,
