@@ -14,7 +14,7 @@ mytheme<- theme(axis.title.y = element_blank(),
 #with MESS
 setwd("/media/matt/OS/output/out")
 #withoutMESS
-setwd("~/Documents/niche/pca")
+setwd("~/Documents/niche/pca_nobuff")
 
 pca100 <- read.csv ("pca_env0.csv")
 pca95 <- read.csv ("pca_env0.05.csv")
@@ -77,7 +77,7 @@ p <- ggplot (pca_df, aes(x=Quantile, y=unfilling), group=species) +
 
 
 library (grid)
-postscript("//media/matt/OS/output/out/figs/Fig3b.eps",horizontal=FALSE, onefile = FALSE, paper="special",height=10,width=20, bg="white")
+pdf (file = "~/Documents/niche/figs/Fig3.pdf", paper="special", width=16, height=9)
 vplayout <- function(x, y) viewport(layout.pos.row = x, layout.pos.col = y)
 grid.newpage()
 pushViewport(viewport(layout = grid.layout(1, 2, widths=c(1,1))))

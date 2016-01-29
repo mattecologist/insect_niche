@@ -25,7 +25,7 @@ species = list.files('occurences_nobuffer')
 
 for (spp in species) { cat(spp,'\n') 
 
-
+setwd ("/Volumes/Matt2015/Postdoc backup/output")
 #read in the native and invasive occurences + background
 #native occurences
 spp1 <- read.csv (paste0('./occurences_nobuffer/',spp,'/',"nat_df.csv"))
@@ -152,11 +152,72 @@ proj_stack <- get_predictions(ensembleBiomodProj)
 
 #1 = TSS by mean, 2 = TSS by wmean, 3 = ROC by mean, 4 = ROC by wmean
 
-writeRaster (proj_stack[[1]], file=paste0(spp,"_nat_TSS.asc"), overwrite=TRUE)
-writeRaster (proj_stack[[2]], file=paste0(spp,"_nat_ROC.asc"), overwrite=TRUE)
+#writeRaster (proj_stack[[1]], file=paste0(spp,"_nat_TSS.asc"), overwrite=TRUE)
+writeRaster (proj_stack[[3]], file=paste0(spp,"_nat_ROC.asc"), overwrite=TRUE)
 
 ##clear memory & temp files
 removeTmpFiles(h = 0.01)
 gc()
 }
 
+library (raster); library (ecospat);library (maptools) 
+
+# set up a blank data frame to write boyce scores to
+rm(outdata)
+outdata = data.frame(species=species, boyce=NA) 
+
+setwd ("/Volumes/Matt2015/Postdoc backup/output")
+
+
+# begin species loop
+for (spp in species) { cat(spp,'\n') 
+  
+  ##read in the shape files for the distributions  
+  invpoly <- readShapePoly (paste0("./occurences/", spp, "/invpoly.shp"))     
+  natpoly <- readShapePoly (paste0("./occurences/", spp, "/natpoly.shp"))     
+  
+  #read in the occurences
+  occur1 <- read.csv (paste0("./occurences/", spp, "/clim1.csv"))
+  occur2 <- read.csv (paste0("./occurences/", spp, "/clim2.csv"))
+  occur <- rbind (occur1, occur2)
+  
+  #single data frame of lats and longs for observations
+  occur_pts <- occur2[,1:2]
+  
+  #read in the raster of the consensus model for the species 
+  #(_nat_ROC.asc = model built on native range only and projected globally)                    
+  r1 <- raster (paste0("/Volumes/Matt2015/niche_nobuff/",spp,"_nat_ROC.asc"))
+  
+  #rasterize the polygon of the invasive range
+  invR <- rasterize (invpoly, r1)
+  
+  #natR <- rasterize (natpoly, r1)
+  #allR <- merge (natR, invR)
+  
+  # mask the raster of the consensus model 
+  r2 <- mask (r1, invR)
+  
+  #take the predictions within the mask, create a data.frame and remove the NAs
+  r3<- as.data.frame (r2)
+  fit <- na.omit (r3)
+  
+  # extract the modelled values at the presence points
+  obs <- extract (r2, occur_pts)
+  obs <- na.omit (obs)
+  
+  
+  #
+  boyce_val <- ecospat.boyce (fit, obs, nclass=0, 
+                              window.w="default",
+                              res=100, PEplot=FALSE)
+  
+  jj <- boyce_val$Spearman.cor
+  jj
+  
+  ii = which(outdata$species==spp)
+  
+  outdata$species[ii] = spp
+  outdata$boyce[ii] = jj
+}
+
+write.csv (outdata, file="~/Documents/niche/boyce.csv")

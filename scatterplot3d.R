@@ -7,7 +7,7 @@
 library (scatterplot3d)
 
 ### !!! this boyden table is out of date, rebuild!!!!
-boyce_val <- read.csv ("~/Documents/nicheSDM/boyce_sept.csv")
+boyce_val <- read.csv ("~/Documents/niche/boyce.csv")
 #at the moment this is just taking in the 75% overlap one...
 pca_val <- read.csv ("~/Documents/niche/pca_nobuff/pca_env0.25.csv")
 pca_val$unfilling <- pca_val$unfilling * -1
@@ -70,7 +70,7 @@ niche.data.temp2 <- test[,c("species", "boyce", "overlap", "unfilling", "ID", "p
 colnames(niche.data.temp2)[4] <- "change"
 
 
-pdf (file = "/media/matt/OS/output/sept/Fig1.pdf", paper="special", width=10, height=6)
+pdf (file = "~/Documents/niche/figs/Fig1.pdf", paper="special", width=10, height=6)
 
 
 plot.niche <-scatterplot3d(test$overlap,test$boyce,test$points,
@@ -130,7 +130,7 @@ unf <- data.frame (rbind (y1, y2, y3, y4))
 row.names (unf) <- c("Total", "Coleoptera", "Diptera", "Formicidae")
 
 
-pdf (file = "/media/matt/OS/output/sept/Fig2.pdf", paper="special", width=10, height=6)
+pdf (file = "~/Documents/niche/figs/Fig2.pdf", paper="special", width=10, height=6)
 
 par(mfrow=c(1, 2))
 barplot (exp[,1], col=c("light grey", "#fb0009", "#e6c800","#007aa6" ),names.arg=rownames(exp), main="Expansion", ylim=c(0,100))
