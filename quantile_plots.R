@@ -12,7 +12,7 @@ mytheme<- theme(axis.title.y = element_blank(),
                 axis.text = element_text (colour="black", size=20))
 
 #with MESS
-setwd("/media/matt/OS/output/out")
+#setwd("/media/matt/OS/output/out")
 #withoutMESS
 setwd("~/Documents/niche/pca_nobuff")
 
