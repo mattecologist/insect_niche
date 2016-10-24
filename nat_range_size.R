@@ -24,7 +24,7 @@ jj <- cellStats (natR, 'sum', na.rm=TRUE)
 ## calculate area based on ENM prediction
 ## need to add in thresholding here too. 
 
-r1 <- raster (paste0("/Volumes/Matt2015/insect_niche/ENM_nobuff/",spp,"_nat_ROC.asc"))
+r1 <- raster (paste0("/Volumes/Matt2015/niche_nobuff/",spp,"_nat_ROC.asc"))
 r2 <- crop (r1, nat)
 kk <- cellStats (r2, 'sum', na.rm=TRUE)
 
@@ -100,12 +100,32 @@ dataset$unf_bin [dataset$unfilling <=0.1] <- 0
 
 write.csv (dataset, file="~/Documents/niche/summary_stats.csv")
 
-mod1 = glm(exp_bin ~ cells + poleward + equator + inv_mar + inv_spec,
-             family = binomial(link = "logit"), data = dataset)
+dataset <- read.csv ("~/Documents/niche/summary_stats.csv")
+
+mod1 = glm(exp_bin ~ cells + enm + poleward + equator + HII_mean_native +
+          HII_mean_invasive + POP_mean_native + POP_mean_invasive + PORT_mean_native +
+            PORT_mean_invasive + ROAD_mean_native + ROAD_mean_invasive + HANPP_mean_native +HANPP_mean_invasive, 
+          family = binomial(link = "logit"), data = dataset)
 summary(mod1)
 
 mod2 <- nlme (expansion ~ unfilling (cells, poleward, equator, delta_mar, delta_spec), data=dataset,
               fixed= cells + poleward + equator + delta_mar + delta_spec)
 
-mod3 <- gls (expansion ~ cells + poleward + equator + delta_mar + delta_spec, data=dataset)
+mod3 <- gls (unfilling ~ cells + poleward + equator, data=dataset)
+summary (mod3)
+
+mod4 <- lme (boyce ~ Family, data=dataset, random=~1)
+
+model1=gam(dataset$expansion~s(dataset$HII_mean_native, 4))
+summary(model1) # Dev= 57% P<0.001 edf= 2.64 (BUT dev= 9.3% without outlier)
+plot(model1,residuals=T,pch=20,shade=T,xlab="HII native range",ylab="Expansion",col=Order)
+legend(17,0.8,c("Acari","Coleoptera","Diptera","Hemiptera","Hymenoptera","Lepidoptera"),col=c(1:6),pch=20)
+
+
+library(MuMIn)
+#data(Cement)
+fm1 <- glm(dataset$boyce ~ ., data = dataset[,7:10])
+dd <- dredge(fm1)
+
+
 

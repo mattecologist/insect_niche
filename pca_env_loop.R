@@ -84,38 +84,38 @@ rm (spp2_vals)
 ########################### MESS ANALYSIS ###############################
 #########################################################################
 #load up the polygons
-# natpoly <- readShapePoly (paste0("./occurences/", spp,"/natpoly.shp"))
-# invpoly <- readShapePoly (paste0("./occurences/", spp, "/invpoly.shp"))
-# 
-# #convert to raster
-# natmask <- rasterize (natpoly, cruclim)
-# invmask <- rasterize (invpoly, cruclim)
-# 
-# e <- c(invpoly@bbox[1,1], invpoly@bbox[1,2], invpoly@bbox[2,1], invpoly@bbox[2,2])
-# invmask <- crop (invmask, e)
-# inv_cru <- crop (cruclim, invmask)
-# inv_cru <- mask (inv_cru, invmask)
-# 
-# mmm <- mess (inv_cru, spp1[,4:11], full=FALSE)
-# 
-# ## The value here (0 or -10 or -20) reflects the MESS threshold to remove non-analog climates at
-# mmc <- reclassify (mmm, c (-Inf, -10, NA))
-# 
-# ## I was having issues with this species - it doesn't have enoguh presence data inside analog climate space
-# ## so had to be skipped for the MESS tests
-# if (spp == "a_tessellatus"){
-#   mmc <- mmm
-# }
-# 
-# par (mfrow=c(2, 1))
-# plot (mmm)
-# plot (mmc)
-# 
-# spp_mmc <- extract (mmc, spp2[,1:2])
-# spp_mmc[spp_mmc==Inf] <- NA
-# spp2$mess <- spp_mmc
-# spp2 <- spp2[!is.na(spp2$mess),]
-# spp2$mess <- NULL
+natpoly <- readShapePoly (paste0("./occurences/", spp,"/natpoly.shp"))
+invpoly <- readShapePoly (paste0("./occurences/", spp, "/invpoly.shp"))
+
+#convert to raster
+natmask <- rasterize (natpoly, cruclim)
+invmask <- rasterize (invpoly, cruclim)
+
+e <- c(invpoly@bbox[1,1], invpoly@bbox[1,2], invpoly@bbox[2,1], invpoly@bbox[2,2])
+invmask <- crop (invmask, e)
+inv_cru <- crop (cruclim, invmask)
+inv_cru <- mask (inv_cru, invmask)
+
+mmm <- mess (inv_cru, spp1[,4:11], full=FALSE)
+
+## The value here (0 or -10 or -20) reflects the MESS threshold to remove non-analog climates at
+mmc <- reclassify (mmm, c (-Inf, -20, NA))
+
+## I was having issues with this species - it doesn't have enoguh presence data inside analog climate space
+## so had to be skipped for the MESS tests
+if (spp == "a_tessellatus"){
+  mmc <- mmm
+}
+
+par (mfrow=c(2, 1))
+plot (mmm)
+plot (mmc)
+
+spp_mmc <- extract (mmc, spp2[,1:2])
+spp_mmc[spp_mmc==Inf] <- NA
+spp2$mess <- spp_mmc
+spp2 <- spp2[!is.na(spp2$mess),]
+spp2$mess <- NULL
 #########################################################################
 
 #setup dataframes for analysis (clim1 = all cells P&A, occ.sp1 = presences across these cells)
@@ -311,8 +311,8 @@ outdata$euc_dist[ii] = euc.dist
 outdata$euc_ext[ii] = euc.ext
 
 }
-write.csv (outdata, file=paste0("~/Documents/niche/pca_nobuff/pca_env",pcat,".csv"))
-write.csv (ident, file=paste0("~/Documents/niche/pca_nobuff/pca_env_ident",pcat,".csv"))
+write.csv (outdata, file=paste0("~/Documents/niche/pca_nobuffMESS20/pca_env",pcat,".csv"))
+write.csv (ident, file=paste0("~/Documents/niche/pca_nobuffMESS20/pca_env_ident",pcat,".csv"))
 
 }
 

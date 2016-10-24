@@ -70,7 +70,7 @@ niche.data.temp2 <- test[,c("species", "boyce", "overlap", "unfilling", "ID", "p
 colnames(niche.data.temp2)[4] <- "change"
 
 
-pdf (file = "~/Documents/niche/figs/Fig1.pdf", paper="special", width=10, height=6)
+pdf (file = "~/Documents/niche/figs/Fig1.pdf", paper="special", width=10, height=8)
 
 
 plot.niche <-scatterplot3d(test$overlap,test$boyce,test$points,
@@ -95,7 +95,7 @@ plot.niche$plane3d(0,0,0, col="grey",lty="dashed")
 text(forexp$x,forexp$y, 
      labels= pca_val$X,
      #outdata$lab,
-    
+    adj=c(0, 2),
      cex=.75)
 
 dev.off()

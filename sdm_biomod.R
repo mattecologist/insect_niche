@@ -23,7 +23,7 @@ names (cruclim) <- c("bio02","bio03","bio05","bio06","bio07","bio13","bio14","bi
 setwd ("/Volumes/Matt2015/Postdoc backup/output")
 species = list.files('occurences_nobuffer')
 
-for (spp in species) { cat(spp,'\n') 
+for (spp in species[20:22]) { cat(spp,'\n') 
 
 setwd ("/Volumes/Matt2015/Postdoc backup/output")
 #read in the native and invasive occurences + background
@@ -101,8 +101,8 @@ myBiomodModelOut <- BIOMOD_Modeling(
                                         myBiomodData,
                                         models = c('GLM', 'GBM', 'RF', 'MAXENT'), #four models used
                                         models.options = myBiomodOption,
-                                        NbRunEval=1, # how many runs to do = normally 10, but here is 1
-                                        DataSplit=100, # data split =100. normally 70 for training, 30 for testing
+                                        NbRunEval=10, # how many runs to do = normally 10, but here is 1
+                                        DataSplit=70, # data split =100. normally 70 for training, 30 for testing
                                         Yweights=NULL,
                                         Prevalence=0.5,
                                         VarImport=10,
@@ -131,9 +131,9 @@ myBiomodProj <- BIOMOD_Projection(modeling.output = myBiomodModelOut,
 myEnsemble <- BIOMOD_EnsembleModeling (modeling.output =myBiomodModelOut, 
                                        chosen.models='all', 
                                        em.by = 'all',
-                                       #eval.metric=c('TSS','ROC'),
-                                       #eval.metric.quality.threshold=c(0.5, 0.7), ##this TSS score is low, but sometimes shit is broke
-                                       #models.eval.meth = c('TSS', 'ROC'), 
+                                       eval.metric=c('TSS','ROC'),
+                                       eval.metric.quality.threshold=c(0.5, 0.7), ##this TSS score is low, but sometimes shit is broke
+                                       models.eval.meth = c('TSS', 'ROC'), 
                                        prob.mean = FALSE,
                                        prob.ci.alpha = 0.05,
                                        committee.averaging = FALSE,
@@ -152,8 +152,8 @@ proj_stack <- get_predictions(ensembleBiomodProj)
 
 #1 = TSS by mean, 2 = TSS by wmean, 3 = ROC by mean, 4 = ROC by wmean
 
-#writeRaster (proj_stack[[1]], file=paste0(spp,"_nat_TSS.asc"), overwrite=TRUE)
-writeRaster (proj_stack[[3]], file=paste0(spp,"_nat_ROC.asc"), overwrite=TRUE)
+writeRaster (proj_stack[[1]], file=paste0(spp,"_nat_TSS.asc"), overwrite=TRUE)
+writeRaster (proj_stack[[2]], file=paste0(spp,"_nat_ROC.asc"), overwrite=TRUE)
 
 ##clear memory & temp files
 removeTmpFiles(h = 0.01)
